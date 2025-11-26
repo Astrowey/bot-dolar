@@ -2,10 +2,11 @@ name: Bot Dolar Peru
 
 on:
   schedule:
-    # Cron sintaxis (minuto hora dia mes dia-semana)
-    # Corre a las 14:00 UTC (9:00 AM Perú) y 20:00 UTC (3:00 PM Perú) de Lunes a Viernes
-    - cron: '0 14,20 * * 1-5'
-  workflow_dispatch: # Permite que lo ejecutes manualmente con un botón para probar
+    # Minuto Hora Dia Mes Dia-Semana
+    # 14:00 UTC = 9:00 AM Perú (Apertura)
+    # 19:00 UTC = 2:00 PM Perú (Cierre aproximado)
+    - cron: '0 14,19 * * 1-5'
+  workflow_dispatch:
 
 jobs:
   build:
