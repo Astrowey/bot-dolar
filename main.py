@@ -2,63 +2,69 @@ import yfinance as yf
 import requests
 import os
 from datetime import datetime
+import pytz # Para manejar la hora de Perú
 
 # --- CONFIGURACIÓN ---
-TICKER = "PEN=X"  # Dólar vs Sol
-TOKEN = os.getenv('TELEGRAM_TOKEN') # La clave secreta de tu bot
-CHAT_ID = os.getenv('TELEGRAM_CHAT_ID') # Tu ID de usuario en Telegram
+TICKER = "PEN=X"
+TOKEN = os.getenv('TELEGRAM_TOKEN')
+CHAT_ID = os.getenv('TELEGRAM_CHAT_ID')
 
 def enviar_telegram(mensaje):
-    print(f"--> Intentando enviar mensaje a ID: {CHAT_ID}...") # Para verificar que leyó el ID
-    
     if not TOKEN or not CHAT_ID:
-        print("Error: Faltan las credenciales (Token o ID) en los Secrets.")
+        print("Error: Credenciales no encontradas.")
         return
-
+    
     url = f"https://api.telegram.org/bot{TOKEN}/sendMessage"
-    data = {"chat_id": CHAT_ID, "text": mensaje}
+    # parse_mode="Markdown" permite usar negritas y formato
+    data = {"chat_id": CHAT_ID, "text": mensaje, "parse_mode": "Markdown"}
     
-    # Aquí capturamos la respuesta de Telegram
-    response = requests.post(url, data=data)
-    
-    # Imprimimos el resultado (Éxito o Error)
-    print(f"Respuesta de Telegram: {response.status_code}")
-    print(f"Detalle: {response.text}")
+    try:
+        requests.post(url, data=data)
+        print("Mensaje enviado a Telegram.")
+    except Exception as e:
+        print(f"Error enviando mensaje: {e}")
 
 def analizar_mercado():
     print(f"Analizando {TICKER}...")
     
-    # 1. Descargar datos del último mes (intervalo diario)
+    # Descargar datos
     data = yf.download(TICKER, period="1mo", interval="1d", progress=False)
-    
     if data.empty:
-        print("No se pudieron obtener datos.")
         return
 
-    # 2. Obtener precios (El último dato disponible es el precio actual/cierre de hoy)
-    precio_actual = data['Close'].iloc[-1].item() # .item() convierte de numpy a float nativo
-    
-    # Calculamos min y max EXCLUYENDO el día de hoy para comparar
-    historial_pasado = data['Close'].iloc[:-1] 
+    # Obtener valores
+    precio_actual = data['Close'].iloc[-1].item()
+    historial_pasado = data['Close'].iloc[:-1]
     min_mes = historial_pasado.min().item()
     max_mes = historial_pasado.max().item()
-
-    print(f"Precio Actual: {precio_actual:.4f}")
-    print(f"Mínimo (30 días): {min_mes:.4f} | Máximo (30 días): {max_mes:.4f}")
-
-    # 3. Lógica de Alertas
+    
+    # Definir el "Estado" del mercado para el reporte
+    aviso_especial = ""
+    icono_estado = "🟢" # Verde por defecto (Estable)
+    
     if precio_actual <= min_mes:
-        msg = f"🚨 BAJO HISTÓRICO (Mes): El dólar bajó a S/ {precio_actual:.3f}. Es buen momento para COMPRAR."
-        enviar_telegram(msg)
-        print("Alerta de compra enviada.")
-        
+        icono_estado = "🚨"
+        aviso_especial = "\n🔥 *¡ATENCIÓN!* Estamos en un *MINIMO MENSUAL*. Buen momento para comprar."
     elif precio_actual >= max_mes:
-        msg = f"📈 ALTO HISTÓRICO (Mes): El dólar subió a S/ {precio_actual:.3f}. Es buen momento para VENDER."
-        enviar_telegram(msg)
-        print("Alerta de venta enviada.")
-    else:
-        print("El precio está estable dentro del rango mensual. No se envía alerta.")
+        icono_estado = "💰"
+        aviso_especial = "\n🚀 *¡ATENCIÓN!* Estamos en un *MAXIMO MENSUAL*. Buen momento para vender."
+
+    # Obtener hora de Perú para el mensaje
+    zona_peru = pytz.timezone('America/Lima')
+    hora_peru = datetime.now(zona_peru).strftime("%d/%m/%Y %I:%M %p")
+
+    # --- CREANDO EL MENSAJE BONITO ---
+    mensaje = (
+        f"📊 *REPORTE DEL DÓLAR* 🇵🇪\n"
+        f"🕒 _{hora_peru}_\n\n"
+        f"💵 *Precio Actual:* S/ {precio_actual:.3f} {icono_estado}\n\n"
+        f"📉 *Mínimo (30d):* S/ {min_mes:.3f}\n"
+        f"📈 *Máximo (30d):* S/ {max_mes:.3f}\n"
+        f"{aviso_especial}"
+    )
+
+    # Enviamos el reporte SIEMPRE (Reporte Diario)
+    enviar_telegram(mensaje)
 
 if __name__ == "__main__":
-    # La prueba ya funcionó, ahora solo analizamos
     analizar_mercado()
