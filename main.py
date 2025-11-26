@@ -9,12 +9,21 @@ TOKEN = os.getenv('TELEGRAM_TOKEN') # La clave secreta de tu bot
 CHAT_ID = os.getenv('TELEGRAM_CHAT_ID') # Tu ID de usuario en Telegram
 
 def enviar_telegram(mensaje):
+    print(f"--> Intentando enviar mensaje a ID: {CHAT_ID}...") # Para verificar que leyó el ID
+    
     if not TOKEN or not CHAT_ID:
-        print("Error: Faltan las credenciales de Telegram")
+        print("Error: Faltan las credenciales (Token o ID) en los Secrets.")
         return
+
     url = f"https://api.telegram.org/bot{TOKEN}/sendMessage"
     data = {"chat_id": CHAT_ID, "text": mensaje}
-    requests.post(url, data=data)
+    
+    # Aquí capturamos la respuesta de Telegram
+    response = requests.post(url, data=data)
+    
+    # Imprimimos el resultado (Éxito o Error)
+    print(f"Respuesta de Telegram: {response.status_code}")
+    print(f"Detalle: {response.text}")
 
 def analizar_mercado():
     print(f"Analizando {TICKER}...")
