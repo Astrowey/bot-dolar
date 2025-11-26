@@ -60,7 +60,5 @@ def analizar_mercado():
         print("El precio está estable dentro del rango mensual. No se envía alerta.")
 
 if __name__ == "__main__":
-    # LINEA DE PRUEBA (Borrar después)
-    enviar_telegram("Hola! Soy tu bot y confirmo que tengo conexión.") 
-    
+    # La prueba ya funcionó, ahora solo analizamos
     analizar_mercado()
