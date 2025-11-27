@@ -60,7 +60,7 @@ def analizar_mercado():
     hora = ahora.hour
     minuto = ahora.minute
     hora_texto = ahora.strftime("%I:%M %p")
-    fecha_hoy = ahora.strftime("%Y-%m-%d") # Ej: 2025-11-27
+    fecha_hoy = ahora.strftime("%Y-%m-%d")
 
     # 2. LEER MEMORIA
     estado = leer_estado()
@@ -68,15 +68,27 @@ def analizar_mercado():
     ultima_apertura = estado.get('fecha_apertura', "")
     ultimo_cierre = estado.get('fecha_cierre', "")
 
-    # 3. OBTENER DATOS DEL MERCADO
-    data = yf.download(TICKER, period="1mo", interval="1d", progress=False)
-    if data.empty: return
+    # 3. OBTENER DATOS DEL MERCADO (CON DIAGNÓSTICO)
+    print("Descargando datos de Yahoo...")
+    try:
+        # Añadimos multi_level_index=False para evitar problemas con la nueva versión de yfinance
+        data = yf.download(TICKER, period="1mo", interval="1d", progress=False, multi_level_index=False)
+    except Exception as e:
+        print(f"⚠️ Error crítico descargando Yahoo: {e}")
+        return
+
+    if data.empty:
+        print("⚠️ ALERTA: Yahoo Finance devolvió datos vacíos. Posible fallo de conexión o IP bloqueada.")
+        return
+    
+    print("Datos de Yahoo descargados correctamente.")
 
     precio_oficial = data['Close'].iloc[-1].item()
     historial = data['Close'].iloc[:-1]
     min_mes = historial.min().item()
     max_mes = historial.max().item()
 
+    print("Obteniendo precio paralelo...")
     precio_paralelo = obtener_precio_callejero()
     precio_actual = precio_paralelo if precio_paralelo else precio_oficial
     
@@ -86,39 +98,36 @@ def analizar_mercado():
     icono_titulo = "🔔"
     guardar_cambios = False
 
-    # CASO A: APERTURA (9 AM)
-    # Solo entramos si NO hemos saludado HOY todavía
+    # CASO A: APERTURA (9 AM) - VENTANA DE 1 HORA
     if hora == 9 and ultima_apertura != fecha_hoy:
         tipo_reporte = "FORZAR_ENVIO"
         icono_titulo = "☕ BUENOS DÍAS"
         mensaje_intro = "☀️ *APERTURA DE MERCADO*\nHoy comenzamos con estos valores:"
-        estado['fecha_apertura'] = fecha_hoy # Marcamos que ya saludamos hoy
+        estado['fecha_apertura'] = fecha_hoy
         guardar_cambios = True
 
-    # CASO B: CIERRE (6 PM)
-    # Solo entramos si NO hemos despedido HOY todavía
+    # CASO B: CIERRE (6 PM) - VENTANA DE 1 HORA
     elif hora == 18 and ultimo_cierre != fecha_hoy:
         tipo_reporte = "FORZAR_ENVIO"
         icono_titulo = "🌙 BUENAS NOCHES"
         mensaje_intro = "🌚 *CIERRE DE MERCADO*\nHoy el mercado cerró con los siguientes valores:"
-        estado['fecha_cierre'] = fecha_hoy # Marcamos que ya despedimos hoy
+        estado['fecha_cierre'] = fecha_hoy
         guardar_cambios = True
 
-    # CASO C: VIGILANCIA NORMAL (10 AM - 5 PM)
+    # CASO C: VIGILANCIA NORMAL
     diferencia = abs(precio_actual - ultimo_precio)
     enviar = False
 
     if tipo_reporte == "FORZAR_ENVIO":
         enviar = True
     else:
-        # Lógica de silencio: Solo avisa si cambia 0.003 o toca extremos
         if diferencia >= 0.003: enviar = True
         if precio_actual <= min_mes and diferencia > 0: enviar = True
         if precio_actual >= max_mes and diferencia > 0: enviar = True
 
     # 5. ENVIAR Y GUARDAR
     if enviar:
-        print(f"Enviando reporte: {icono_titulo}")
+        print(f"--> ENVIANDO A TELEGRAM: {icono_titulo}")
         
         icono_precio = ""
         if precio_actual <= min_mes: icono_precio = "🚨 MIN"
@@ -142,14 +151,16 @@ def analizar_mercado():
         )
 
         enviar_telegram(mensaje)
-        
-        # Actualizamos el precio en memoria
         estado['precio'] = precio_actual
         guardar_cambios = True
+    else:
+        print(f"Sin novedades. Diferencia: {diferencia:.4f}. No molestamos.")
     
-    # 6. GUARDADO FINAL (Si hubo saludo o cambio de precio)
     if guardar_cambios:
+        print("Guardando estado en memoria...")
         guardar_estado(estado)
+    
+    print("✅ Ejecución finalizada con éxito.")
 
 if __name__ == "__main__":
     analizar_mercado()
