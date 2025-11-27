@@ -78,13 +78,13 @@ def analizar_mercado():
     icono_titulo = "🔔"
     
     # CASO A: APERTURA (Entre 9:00 AM y 9:15 AM)
-    if hora == 9 and minuto < 15:
+    if hora == 9 and minuto < 60:
         tipo_reporte = "FORZAR_ENVIO"
         icono_titulo = "☕ BUENOS DÍAS"
         mensaje_intro = "☀️ *APERTURA DE MERCADO*\nHoy comenzamos con estos valores:"
 
     # CASO B: CIERRE (Entre 6:00 PM y 6:15 PM)
-    elif hora == 18 and minuto < 15:
+    elif hora == 18 and minuto < 60:
         tipo_reporte = "FORZAR_ENVIO"
         icono_titulo = "🌙 BUENAS NOCHES"
         mensaje_intro = "🌚 *CIERRE DE MERCADO*\nHoy el mercado cerró con los siguientes valores:"
