@@ -16,38 +16,59 @@ ARCHIVO_ESTADO = 'estado.json'
 # --- FRASES CON CALLE ---
 FRASES_APERTURA = [
     "☀️ *¡Habla causa!* Arranca el mercado. Agarra tu café que aquí vamos:",
-    "🐓 *¡Quiquiriquí!* Despierta oye, que el dinero no duerme. Así amanecemos:",
-    "🚀 *¡Arriba Perú!* Vamos a ver cómo se porta el gringo hoy:",
-    "😎 *¡Buenos días alegría!* A chambear que la plata no cae del cielo."
+    "🐓 *¡Quiquiriquí!* Despierta oye, que el dinero no duerme (y la inflación tampoco).",
+    "🚀 *¡Arriba Perú!* Vamos a ver cómo se porta el gringo hoy. Atento a la jugada:",
+    "😎 *¡Buenos días alegría!* A chambear que la plata no cae del cielo.",
+    "🔋 *¡Habla batería seria!* Carga pilas que hoy se factura. Así amanecemos:",
+    "☕ *¡Despierta!* Ni el gallo se levantó tan temprano, pero el dólar sí. Checa:",
+    "🧢 *¡Alao!* ¿Todo chill? Vamos a ver si hoy nos hacemos millonarios o seguimos misios:",
+    "🔔 *¡Ding dong!* Abrió el mercado, mano. Deja de procrastinar y mira esto:"
 ]
 
 FRASES_CIERRE = [
     "🌙 *¡Ya cerró el kiosko!* Mañana seguimos haciendo plata. Así terminamos:",
-    "😴 *¡A mimir!* El mercado se fue a dormir. Resumen del día:",
+    "😴 *¡A mimir!* El mercado se fue a dormir y tú también deberías. Resumen:",
     "🍻 *¡Nos fuimos!* Cierra la laptop y descansa. Así quedó la cosa:",
-    "🌚 *¡Chau chau!* Se acabó la jarana por hoy. Datos finales:"
+    "🌚 *¡Chau chau!* Se acabó la jarana por hoy. Nos vidrios mañana con estos datos:",
+    "🛑 *¡Baja la cortina!* Ya no hay atención hasta mañana. Anda descansa, tigre.",
+    "🍜 *¡Chaufa!* Se terminó la jornada. Anda pide tu delivery y relájate.",
+    "🔚 *¡Game Over!* Se acabó el día bursátil. Aquí la foto final:"
 ]
 
 FRASES_COMPRA = [
     "\n🐷 *¡ROMPE EL CHANCHITO!* El dólar está en el suelo.\n✅ Compra barato, vende caro (ley de vida).",
     "\n🤑 *¡OFERTA DE INFARTO!* Está más barato que menú de mercado.\n✅ Aprovecha y compra unos cocos.",
-    "\n📉 *¡ESTÁ REGALADO!* Si tienes soles, vuélvelos dólares AL TOQUE.\n✅ Oportunidad de compra detectada."
+    "\n📉 *¡ESTÁ REGALADO!* Si tienes soles, vuélvelos dólares AL TOQUE.\n✅ Oportunidad de compra detectada.",
+    "\n🥚 *¡PRECIO DE HUEVO!* Está baratito casero.\n✅ Llévatelo antes que se acabe.",
+    "\n🛏️ *¡SACA LO DEL COLCHÓN!* Es momento de stockearse de verdes.\n✅ No lo pienses mucho o te ganan.",
+    "\n🏃 *¡CORRE AL BANCO!* Está bajando rico.\n✅ Aprovecha la oferta y asegura tu chivilín."
 ]
 
 FRASES_VENTA = [
     "\n🚀 *¡SE FUE A LAS NUBES!* Asu mare, qué tal subida.\n✅ Vende tus dólares y hazte millonario.",
     "\n💰 *¡ESTÁ CAROLINE!* El dólar está por los techos.\n✅ Momento perfecto para vender y cobrar rico.",
-    "\n🔥 *¡VENDE TODO!* Sácale el jugo a esta subida.\n✅ Cambia esos dólares a soles y gánate el extra."
+    "\n🔥 *¡VENDE TODO!* Sácale el jugo a esta subida.\n✅ Cambia esos dólares a soles y gánate el extra.",
+    "\n😱 *¡ASU QUÉ PALTA!* Qué tal subidón.\n✅ Si tienes dólares, hoy te consagras. ¡Vende!",
+    "\n🤑 *¡HAZTE UNA!* El gringo está power.\n✅ Vende y date ese gustito que querías.",
+    "\n📈 *¡ESTÁ PICANTE!* Aprovecha el pánico y vende caro.\n✅ Hoy se factura en grande."
 ]
 
 FRASES_SUBIDA = [
     "\n📈 *Ojo al piojo:* Está subiendo rápido. Si necesitas soles, anda pensando en vender.",
-    "\n🚀 *Despegando:* El gringo se está poniendo fuerte. Atento a la jugada."
+    "\n🚀 *Despegando:* El gringo se está poniendo fuerte. Atento a la jugada.",
+    "\n👀 *¡Yara!* Se está disparando el precio. Checa bien tu billetera.",
+    "\n⛰️ *¡Como espuma!* Sube y sube. Si debes en dólares, empieza a preocuparte.",
+    "\n✈️ *¡Se va, se va!* El dólar agarra vuelo. Si querías comprar, ya fuiste (por ahora).",
+    "\n🌶️ *¡Está picante!* La cosa se pone caliente. No te duermas."
 ]
 
 FRASES_BAJADA = [
     "\n📉 *Se cae, se cae:* Está bajando. Si querías comprar, prepárate.",
-    "\n🥶 *Se congeló:* Está bajando el precio. Aguanta un poco más o compra ya."
+    "\n🥶 *Se congeló:* Está bajando el precio. Aguanta un poco más o compra ya.",
+    "\n📉 *De bajada:* Parece tobogán. Si tienes deudas en dólares, atento para pagar.",
+    "\n🎢 *¡Tobogán!* Se está chorreando el precio. A río revuelto, ganancia de pescadores.",
+    "\n📉 *¡Suelo, suelo!* Está perdiendo fuerza. Atento para pescar la oferta.",
+    "\n😌 *¡Respira!* Está bajando. Al fin un respiro para tu bolsillo."
 ]
 
 def enviar_telegram(mensaje):
