@@ -2,7 +2,7 @@ name: Bot Dolar Peru
 
 on:
   schedule:
-    # CORREGIDO: De 14:00 UTC a 23:00 UTC (9 AM a 6 PM Perú)
+    # CORREGIDO: Usamos 14-23 para cubrir de 9 AM a 6 PM sin errores de rango
     - cron: '*/10 14-23 * * 1-5'
   workflow_dispatch:
 
@@ -19,7 +19,8 @@ jobs:
       - name: Instalar Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.11'  # <--- CAMBIO CLAVE: Versión más moderna para arreglar el error
+          # CAMBIO CLAVE: Subimos a 3.11 para que soporte la nueva versión de yfinance
+          python-version: '3.11'
 
       - name: Instalar librerías
         run: |
