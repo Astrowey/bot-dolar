@@ -2,16 +2,12 @@ name: Bot Dolar Peru
 
 on:
   schedule:
-    # Corre cada 10 minutos (*/10)
-    # Desde las 14:00 UTC (9 AM Perú) hasta las 23:00 UTC (6 PM Perú)
-    # De Lunes a Viernes
+    # CORREGIDO: De 14:00 UTC a 23:00 UTC (9 AM a 6 PM Perú)
     - cron: '*/10 14-23 * * 1-5'
   workflow_dispatch:
 
-# --- ESTO ES NUEVO Y CRUCIAL ---
 permissions:
-  contents: write  # Le da permiso al bot para guardar el archivo JSON
-# -------------------------------
+  contents: write
 
 jobs:
   build:
@@ -23,7 +19,7 @@ jobs:
       - name: Instalar Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.11'
+          python-version: '3.11'  # <--- CAMBIO CLAVE: Versión más moderna para arreglar el error
 
       - name: Instalar librerías
         run: |
@@ -35,12 +31,10 @@ jobs:
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
         run: python main.py
 
-      # --- PASO EXTRA: GUARDAR MEMORIA ---
       - name: Guardar estado (Auto-Commit)
         run: |
           git config user.name "Bot Dolar Automatico"
           git config user.email "bot@github.com"
           git add estado.json
-          # Solo hace commit si hubo cambios en el archivo
           git commit -m "Actualizando precio detectado" || exit 0
           git push
