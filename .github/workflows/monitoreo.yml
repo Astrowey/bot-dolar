@@ -2,7 +2,8 @@ name: Bot Dolar Peru
 
 on:
   schedule:
-    # CORREGIDO: Usamos 14-23 (9 AM a 6 PM) para evitar errores de sintaxis
+    # CORREGIDO: De 14:00 UTC a 23:00 UTC (9 AM a 6 PM Perú)
+    # Esto elimina el error de "Job not acquired"
     - cron: '*/10 14-23 * * 1-5'
   workflow_dispatch:
 
@@ -19,7 +20,7 @@ jobs:
       - name: Instalar Python
         uses: actions/setup-python@v4
         with:
-          # IMPORTANTE: Subimos a 3.11 para que soporte la nueva versión de yfinance
+          # CAMBIO OBLIGATORIO: Usamos 3.11 para arreglar el error de yfinance
           python-version: '3.11'
 
       - name: Instalar librerías
