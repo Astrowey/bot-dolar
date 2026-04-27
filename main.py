@@ -2,7 +2,8 @@ import yfinance as yf
 import requests
 import os
 import json
-import random  # <--- Necesario para la variedad
+import random
+import re  # <--- NUEVO IMPORT NECESARIO PARA KAMBISTA
 from datetime import datetime
 import pytz 
 from bs4 import BeautifulSoup
@@ -80,33 +81,29 @@ def enviar_telegram(mensaje):
     except: pass
 
 def obtener_precio_callejero():
-    url = "https://cuantoestaeldolar.pe/"
-    # Mejoramos el disfraz del bot para que parezca un humano usando Google Chrome
+    # Consultamos Kambista, la primera casa de cambio online en Perú
+    url = "https://kambista.com/"
     headers = {
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
-        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
-        "Accept-Language": "es-PE,es;q=0.9,en-US;q=0.8,en;q=0.7"
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/120.0.0.0 Safari/537.36"
     }
     
     try:
-        print("🕵️ Buscando precio en la calle...")
+        print("🕵️ Buscando precio en Kambista...")
         response = requests.get(url, headers=headers, timeout=10)
         
         if response.status_code != 200: 
             print(f"❌ Error HTTP: La página bloqueó la conexión (Código {response.status_code})")
             return None
             
-        soup = BeautifulSoup(response.text, 'html.parser')
+        # Kambista siempre incluye su tasa con el formato "Venta: 3.XXX" en su texto
+        match = re.search(r'Venta:\s*(\d+\.\d+)', response.text)
         
-        # Buscamos los elementos del precio
-        precios = soup.find_all('p', class_=lambda x: x and 'ValueCurrency_item_cost' in x)
-        
-        if len(precios) >= 4:
-            precio_texto = precios[3].text.strip()
-            print(f"✅ Precio callejero encontrado: {precio_texto}")
-            return float(precio_texto)
+        if match:
+            precio = float(match.group(1))
+            print(f"✅ Precio callejero encontrado: {precio}")
+            return precio
         else:
-            print(f"⚠️ Alerta: La web cambió su diseño HTML. Elementos encontrados: {len(precios)}")
+            print("⚠️ Alerta: La web cambió su diseño de texto.")
             return None
             
     except Exception as e:
