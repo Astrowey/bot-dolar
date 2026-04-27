@@ -81,16 +81,37 @@ def enviar_telegram(mensaje):
 
 def obtener_precio_callejero():
     url = "https://cuantoestaeldolar.pe/"
-    headers = {"User-Agent": "Mozilla/5.0"}
+    # Mejoramos el disfraz del bot para que parezca un humano usando Google Chrome
+    headers = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
+        "Accept-Language": "es-PE,es;q=0.9,en-US;q=0.8,en;q=0.7"
+    }
+    
     try:
+        print("🕵️ Buscando precio en la calle...")
         response = requests.get(url, headers=headers, timeout=10)
-        if response.status_code != 200: return None
+        
+        if response.status_code != 200: 
+            print(f"❌ Error HTTP: La página bloqueó la conexión (Código {response.status_code})")
+            return None
+            
         soup = BeautifulSoup(response.text, 'html.parser')
+        
+        # Buscamos los elementos del precio
         precios = soup.find_all('p', class_=lambda x: x and 'ValueCurrency_item_cost' in x)
+        
         if len(precios) >= 4:
-            return float(precios[3].text.strip())
+            precio_texto = precios[3].text.strip()
+            print(f"✅ Precio callejero encontrado: {precio_texto}")
+            return float(precio_texto)
+        else:
+            print(f"⚠️ Alerta: La web cambió su diseño HTML. Elementos encontrados: {len(precios)}")
+            return None
+            
+    except Exception as e:
+        print(f"💥 Error técnico al leer la web: {e}")
         return None
-    except: return None
 
 def leer_estado():
     if not os.path.exists(ARCHIVO_ESTADO): return {}
